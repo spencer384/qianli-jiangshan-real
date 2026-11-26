@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>江山千里 · 原稿與實境上下對照 (3D-Real)</title>
+  <title>江山千里 · 原稿、實境與 3D 虛擬多場景對照 (3D-Real)</title>
   <style>
     :root {
       --bg: #0e1316;
-      --panel: rgba(20, 27, 31, 0.92);
+      --panel: rgba(20, 27, 31, 0.94);
       --border: rgba(168, 198, 186, 0.25);
       --accent: #4ec49b;
       --gold: #f0c975;
       --text: #eef3f1;
       --muted: #9eb0aa;
+      --silk-bg: #dad5c2;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -20,56 +21,58 @@
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: "Noto Serif TC", "Microsoft JhengHei", sans-serif;
+      font-family: "Noto Serif TC", "Microsoft JhengHei", serif;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      flex-shrink: 0;
       z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 20px;
-      background: rgba(14, 19, 22, 0.94);
+      padding: 6px 16px;
+      background: rgba(14, 19, 22, 0.98);
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(8px);
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
     .seal {
-      width: 34px; height: 34px;
+      width: 32px; height: 32px;
       background: #b2382b;
       color: #fff4e0;
       display: grid; place-items: center;
-      font-size: 11.5px; font-weight: 700; line-height: 1.05;
+      font-size: 10.5px; font-weight: 700; line-height: 1.05;
       border-radius: 4px;
       flex-shrink: 0;
     }
-    .brand h1 { font-size: 15.5px; color: var(--gold); letter-spacing: 0.6px; }
-    .brand p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .brand h1 { font-size: 14.5px; color: var(--gold); letter-spacing: 0.5px; }
+    .brand p { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
     .badge-wip {
       display: inline-block;
-      font-size: 10.5px;
-      padding: 2px 8px;
+      font-size: 10px;
+      padding: 1px 7px;
       border-radius: 999px;
       background: rgba(240, 201, 117, 0.14);
       border: 1px solid rgba(240, 201, 117, 0.4);
       color: var(--gold);
-      margin-left: 8px;
+      margin-left: 6px;
     }
     .controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 6px 11px;
-      border-radius: 6px;
-      font-size: 12px;
+      padding: 4px 9px;
+      border-radius: 5px;
+      font-size: 11.5px;
       cursor: pointer;
       font-family: inherit;
       transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
     }
     .btn:hover { background: rgba(255, 255, 255, 0.16); }
     .btn.active {
@@ -79,37 +82,112 @@
     }
     .sep {
       width: 1px;
-      height: 20px;
+      height: 18px;
       background: var(--border);
       margin: 0 2px;
     }
     .zoom-label {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--gold);
-      min-width: 44px;
+      min-width: 42px;
       text-align: center;
       font-variant-numeric: tabular-nums;
     }
+
+    /* Scene Selection Ribbon */
+    .scene-ribbon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 16px;
+      background: rgba(18, 25, 30, 0.98);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      white-space: nowrap;
+      z-index: 15;
+    }
+    .ribbon-title {
+      font-size: 11.5px;
+      color: var(--gold);
+      font-weight: 700;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .scene-pills {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .scene-pills::-webkit-scrollbar { display: none; }
+    .scene-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .scene-pill:hover {
+      background: rgba(78, 196, 155, 0.16);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .scene-pill.active {
+      background: rgba(240, 201, 117, 0.24);
+      border-color: var(--gold);
+      color: #fff6db;
+      font-weight: 700;
+      box-shadow: 0 0 8px rgba(240, 201, 117, 0.35);
+    }
+    .scene-nav-btns {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    /* Viewer Stage */
     .viewer {
-      position: fixed;
-      inset: 60px 0 92px 0;
+      flex: 1;
+      min-height: 0;
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      padding: 10px 16px;
+      gap: 6px;
+      padding: 6px 14px;
+    }
+    .row-wrapper {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #080b0d;
+    }
+    .row-wrapper.three-wrap {
+      border-color: rgba(78, 196, 155, 0.35);
+      background: var(--silk-bg);
     }
     .scroll-row {
       position: relative;
       flex: 1;
       min-height: 0;
       overflow: auto;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: #080b0d;
       cursor: grab;
     }
     .scroll-row:active { cursor: grabbing; }
-    .viewer.single-mode .scroll-row.orig-row { display: none; }
     .scroll-stage {
       position: relative;
       display: inline-block;
@@ -124,30 +202,34 @@
       -webkit-user-drag: none;
     }
     .row-tag {
-      position: fixed;
-      left: 28px;
-      z-index: 6;
+      position: absolute;
+      left: 12px;
+      top: 10px;
+      z-index: 10;
       padding: 3px 10px;
       border-radius: 4px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       backdrop-filter: blur(6px);
       pointer-events: none;
       white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
     }
-    .row-tag.orig {
-      top: 78px;
-      background: rgba(42, 34, 22, 0.85);
-      border: 1px solid rgba(240, 201, 117, 0.5);
+    .row-tag.orig-tag {
+      background: rgba(42, 34, 22, 0.88);
+      border: 1px solid rgba(240, 201, 117, 0.55);
       color: var(--gold);
     }
-    .row-tag.real {
-      top: calc(50% + 18px);
-      background: rgba(16, 36, 30, 0.85);
-      border: 1px solid rgba(78, 196, 155, 0.55);
+    .row-tag.real-tag {
+      background: rgba(16, 36, 30, 0.88);
+      border: 1px solid rgba(78, 196, 155, 0.6);
       color: #8bf0cc;
     }
-    .viewer.single-mode .row-tag.real { top: 78px; }
+    .row-tag.three-tag {
+      background: rgba(18, 48, 62, 0.88);
+      border: 1px solid rgba(78, 196, 155, 0.7);
+      color: #7ef2cb;
+    }
     .sync-dot {
       position: absolute;
       width: 18px;
@@ -170,14 +252,134 @@
       border-radius: 50%;
       background: #ffd454;
     }
+
+    /* 3D Container & HUD */
+    .three-container {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    .three-container:active { cursor: grabbing; }
+    .three-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+    .three-hud {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(14, 20, 24, 0.9);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      backdrop-filter: blur(8px);
+    }
+    .three-select {
+      background: rgba(24, 32, 38, 0.95);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .three-select option {
+      background: #10171a;
+      color: #eef3f1;
+    }
+    .three-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(240, 201, 117, 0.15);
+      border: 1px solid rgba(240, 201, 117, 0.4);
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .mini-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .mini-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.18); }
+    .mini-btn.active {
+      background: rgba(78, 196, 155, 0.25);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Floating Scene Info Card */
+    .scene-info-card {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      z-index: 10;
+      max-width: 440px;
+      background: rgba(14, 20, 24, 0.92);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: 7px 12px;
+      border-radius: 6px;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+    .scene-info-card h4 {
+      font-size: 12px;
+      color: var(--gold);
+      margin-bottom: 2px;
+      letter-spacing: 0.5px;
+    }
+    .scene-info-card p {
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    /* Comparison Modes Layouts */
+    .viewer.tri-mode .row-wrapper.three-wrap { display: flex; flex: 1.25; min-height: 170px; }
+    .viewer.tri-mode .row-wrapper.orig-wrap { display: flex; flex: 0.9; min-height: 95px; }
+    .viewer.tri-mode .row-wrapper.real-wrap { display: flex; flex: 0.9; min-height: 95px; }
+
+    .viewer.dual-3d-real-mode .row-wrapper.three-wrap { display: flex; flex: 1.35; min-height: 200px; }
+    .viewer.dual-3d-real-mode .row-wrapper.orig-wrap { display: none; }
+    .viewer.dual-3d-real-mode .row-wrapper.real-wrap { display: flex; flex: 1; min-height: 140px; }
+
+    .viewer.dual-3d-orig-mode .row-wrapper.three-wrap { display: flex; flex: 1.35; min-height: 200px; }
+    .viewer.dual-3d-orig-mode .row-wrapper.orig-wrap { display: flex; flex: 1; min-height: 140px; }
+    .viewer.dual-3d-orig-mode .row-wrapper.real-wrap { display: none; }
+
+    .viewer.dual-orig-real-mode .row-wrapper.three-wrap { display: none; }
+    .viewer.dual-orig-real-mode .row-wrapper.orig-wrap { display: flex; flex: 1; }
+    .viewer.dual-orig-real-mode .row-wrapper.real-wrap { display: flex; flex: 1; }
+
+    .viewer.single-mode .row-wrapper.three-wrap { display: none; }
+    .viewer.single-mode .row-wrapper.orig-wrap { display: none; }
+    .viewer.single-mode .row-wrapper.real-wrap { display: flex; flex: 1; }
+
     .gallery {
       display: none;
-      position: fixed;
-      inset: 60px 0 92px 0;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
-      padding: 20px;
+      padding: 16px;
       grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 18px;
+      gap: 16px;
     }
     .gallery.active { display: grid; }
     .card {
@@ -209,37 +411,88 @@
       align-items: center;
     }
     .card-body strong { color: var(--text); }
+
+    /* Footer & Navigation */
     footer {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
+      flex-shrink: 0;
+      height: 34px;
       z-index: 20;
-      height: 42px;
-      padding: 0 20px;
+      padding: 0 16px;
       background: var(--panel);
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--muted);
       gap: 12px;
     }
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+
+    .nav-bar {
+      flex-shrink: 0;
+      height: 44px;
+      z-index: 20;
+      background: rgba(14, 19, 22, 0.96);
+      border-top: 1px solid var(--border);
+      padding: 4px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-track {
+      position: relative;
+      flex: 1;
+      height: 34px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #080b0d;
+      cursor: pointer;
+    }
+    .nav-track img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.72;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+    .nav-thumb {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border: 2px solid var(--gold);
+      background: rgba(240, 201, 117, 0.18);
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.38);
+      pointer-events: none;
+    }
+    .nav-pct {
+      font-size: 11.5px;
+      color: var(--gold);
+      min-width: 44px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Comments Drawer */
     .drawer {
       position: fixed;
-      top: 60px;
+      top: 0;
       right: 0;
-      bottom: 92px;
+      bottom: 0;
       width: min(380px, 92vw);
-      background: rgba(16, 22, 26, 0.96);
+      background: rgba(16, 22, 26, 0.98);
       border-left: 1px solid var(--border);
       backdrop-filter: blur(12px);
-      z-index: 25;
+      z-index: 50;
       display: flex;
       flex-direction: column;
       transform: translateX(100%);
       transition: transform 0.24s ease;
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.7);
     }
     .drawer.open { transform: translateX(0); }
     .drawer-header {
@@ -343,23 +596,14 @@
       gap: 6px;
       margin-top: 2px;
     }
-    .mini-btn {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .mini-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.15); }
     .drawer-footer {
       padding: 10px 16px;
       border-top: 1px solid var(--border);
       display: flex;
       gap: 8px;
     }
+
+    /* Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -372,7 +616,7 @@
     }
     .modal-backdrop.open { display: grid; }
     .modal {
-      width: min(680px, 95vw);
+      width: min(720px, 95vw);
       max-height: 84vh;
       background: rgba(18, 24, 28, 0.98);
       border: 1px solid var(--border);
@@ -443,79 +687,49 @@
       color: var(--gold);
       margin-right: 6px;
     }
-    .nav-bar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 42px;
-      height: 50px;
-      z-index: 20;
-      background: rgba(14, 19, 22, 0.94);
-      border-top: 1px solid var(--border);
-      padding: 6px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .nav-track {
-      position: relative;
-      flex: 1;
-      height: 36px;
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #080b0d;
-      cursor: pointer;
-    }
-    .nav-track img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.72;
-      display: block;
-      pointer-events: none;
-      user-select: none;
-    }
-    .nav-thumb {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      border: 2px solid var(--gold);
-      background: rgba(240, 201, 117, 0.18);
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.38);
-      pointer-events: none;
-    }
-    .nav-pct {
-      font-size: 11.5px;
-      color: var(--gold);
-      min-width: 44px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-    @media (max-width: 768px) {
+    @media (max-width: 860px) {
       .brand p, .badge-wip { display: none; }
       footer span:first-child { display: none; }
+      .three-hud { flex-wrap: wrap; }
     }
   </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
   <header>
     <div class="brand">
-      <div class="seal">實景<br/>對照</div>
+      <div class="seal">千里<br/>江山</div>
       <div>
-        <h1>江山千里 · 原稿與實境上下對照 (3D-Real)<span class="badge-wip">全 17 段完整版 · 24,960 × 1,080</span></h1>
-        <p>上方：清·方琮《仿王希孟江山千里卷》全卷原稿 ／ 下方：現實擬真攝影全卷重構（1:1 同步縮放對照）</p>
+        <h1>江山千里 · 原稿／實境／3D 虛擬多場景對照 (3D-Real)<span class="badge-wip">三位一體 1:1 校準版</span></h1>
+        <p>上：3D 虛擬場景（青綠水墨／方塊體素）／ 中：清·方琮全卷原稿 ／ 下：自然擬真攝影全卷（長度 1:1 精確對齊）</p>
       </div>
     </div>
     <div class="controls">
-      <button id="btn-compare" class="btn active">上下對照全景</button>
-      <button id="btn-single" class="btn">單看實境全景</button>
-      <button id="btn-gallery" class="btn">分段對照一覽 (18 組)</button>
+      <!-- Multi-Scene Comparison Mode Selector -->
+      <select id="compare-mode-select" class="three-select" style="font-weight: 700; border-color: var(--accent); padding: 4px 10px;" title="選擇比較的場景組合模式">
+        <option value="tri-ink">🌐 3D水墨 ＋ 原稿 ＋ 實境 (三聯全景)</option>
+        <option value="tri-mc">🧱 3D體素 ＋ 原稿 ＋ 實境 (三聯體素)</option>
+        <option value="dual-3d-real">⛰️ 3D水墨 ＋ 實境 (虛實對照)</option>
+        <option value="dual-3d-orig">🎨 3D水墨 ＋ 原稿 (水墨原畫對照)</option>
+        <option value="dual-mc-real">🧱 3D體素 ＋ 實境 (體素實境對照)</option>
+        <option value="dual-orig-real">📜 原稿 ＋ 實境 (經典上下對照)</option>
+        <option value="single-real">🖼️ 單看實境全景</option>
+        <option value="gallery">📐 18 組分段對照一覽</option>
+      </select>
+
       <div class="sep"></div>
-      <button id="btn-zoom-out" class="btn" title="縮小">－</button>
+      <button id="btn-zoom-out" class="btn" title="縮小 2D 長卷">－</button>
       <span id="zoom-label" class="zoom-label">100%</span>
-      <button id="btn-zoom-in" class="btn" title="放大">＋</button>
-      <button id="btn-zoom-reset" class="btn" title="重設為 100%">1:1</button>
+      <button id="btn-zoom-in" class="btn" title="放大 2D 長卷">＋</button>
+      <button id="btn-zoom-reset" class="btn" title="重設 2D 比例為 100%">1:1</button>
       <div class="sep"></div>
       <button id="btn-auto" class="btn">自動漫遊</button>
       <button id="btn-comments" class="btn">💬 評論建議 (<span id="comment-count">0</span>)</button>
@@ -523,19 +737,67 @@
     </div>
   </header>
 
-  <main id="pano-viewer" class="viewer">
-    <div id="orig-row" class="scroll-row orig-row">
-      <span class="row-tag orig">原稿全卷 · 清·方琮青綠山水</span>
-      <div id="orig-stage" class="scroll-stage">
-        <img id="orig-img" src="./assets/scroll_orig_full.jpg" alt="原稿全卷 第01至17段" />
-        <div id="orig-dot" class="sync-dot"></div>
+  <!-- Quick Scenic Spot Selection Bar -->
+  <nav class="scene-ribbon" aria-label="千里江山十景段落選擇">
+    <span class="ribbon-title">🚩 選擇場景段落比較：</span>
+    <div id="scene-pills" class="scene-pills">
+      <button class="scene-pill" data-spot="siyin" title="全卷第17段 · 卷首孤峰水村">卷首 · 孤峰水村</button>
+      <button class="scene-pill" data-spot="youwan" title="全卷第15-16段 · 右岸煙波灣">右岸 · 煙波水灣</button>
+      <button class="scene-pill" data-spot="youer" title="全卷第13-14段 · 右二主山群">右二 · 青綠層巒</button>
+      <button class="scene-pill" data-spot="youyi" title="全卷第10-12段 · 右一大主山">右一 · 峻拔泊船</button>
+      <button class="scene-pill" data-spot="zhongyouwan" title="全卷第08-09段 · 中右開闊水灣">中右 · 留白帆影</button>
+      <button class="scene-pill active" data-spot="zhufeng" title="全卷第06-07段 · 正中特大主峰">核心 · 特大主峰</button>
+      <button class="scene-pill" data-spot="zhongzuo" title="全卷第05段 · 中左層巒山寺">中左 · 山寺浮屠</button>
+      <button class="scene-pill" data-spot="zuozhong" title="全卷第04段 · 左中銳峰群">左中 · 臨江銳峰</button>
+      <button class="scene-pill" data-spot="dahu" title="全卷第02-03段 · 左端平遠大湖">平遠 · 浩瀚大湖</button>
+      <button class="scene-pill" data-spot="juanwei" title="全卷第01段 · 卷尾雙峰與雙印">卷尾 · 峭拔雙峰</button>
+    </div>
+    <div class="scene-nav-btns">
+      <button id="btn-scene-prev" class="mini-btn" title="上一個名勝場景">◀ 上一景</button>
+      <button id="btn-scene-next" class="mini-btn" title="下一個名勝場景">下一景 ▶</button>
+    </div>
+  </nav>
+
+  <main id="pano-viewer" class="viewer tri-mode">
+    <!-- 3D WebGL Row -->
+    <div id="three-wrap" class="row-wrapper three-wrap">
+      <span id="three-tag" class="row-tag three-tag">🌐 3D 虛擬青綠水墨 · 數位場景（長度已 1:1 對齊下方長卷）</span>
+      <div id="three-row" class="scroll-row three-row">
+        <div id="three-canvas-container" class="three-container"></div>
+      </div>
+      <div class="three-hud">
+        <button id="btn-three-style" class="mini-btn active" title="點擊切換為 3D 方塊體素 (Minecraft) 或青綠水墨風格">風格: 🎨 青綠水墨</button>
+        <button id="btn-three-scale" class="mini-btn active" title="點擊切換 1:1 長度比例精確對齊或全卷遠眺總覽">比例: 📏 1:1 對齊</button>
+        <button id="btn-three-view-toggle" class="mini-btn" title="切換 3D 鳥瞰視角或正面長卷長軸視角">視角: 3D鳥瞰</button>
+        <button id="btn-three-reset" class="mini-btn" title="復位 3D 視角">復位</button>
+        <span id="three-coords-badge" class="three-badge">3D X: 0</span>
+      </div>
+      <!-- Floating Scene Description Card -->
+      <div id="scene-info-card" class="scene-info-card">
+        <h4 id="scene-card-title">核心 · 正中特大主峰 (全卷 06-07 段)</h4>
+        <p id="scene-card-desc">全卷最巍峨的雙頂石青主峰，氣勢磅礴；右側飛瀑直瀉入潭，正前方雙層亭拱橋上旅人往來不絕。</p>
       </div>
     </div>
-    <div id="real-row" class="scroll-row real-row">
-      <span class="row-tag real">實境全卷 · 現實擬真攝影重構</span>
-      <div id="real-stage" class="scroll-stage">
-        <img id="real-img" src="./assets/scroll_real_full.jpg" alt="實境攝影全卷 第01至17段" />
-        <div id="real-dot" class="sync-dot"></div>
+
+    <!-- Original Scroll Row -->
+    <div id="orig-wrap" class="row-wrapper orig-wrap">
+      <span class="row-tag orig-tag">原稿全卷 · 清·方琮青綠山水</span>
+      <div id="orig-row" class="scroll-row orig-row">
+        <div id="orig-stage" class="scroll-stage">
+          <img id="orig-img" src="./assets/scroll_orig_full.jpg" alt="原稿全卷 第01至17段" />
+          <div id="orig-dot" class="sync-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photorealistic Scroll Row -->
+    <div id="real-wrap" class="row-wrapper real-wrap">
+      <span class="row-tag real-tag">實境全卷 · 現實擬真攝影重構</span>
+      <div id="real-row" class="scroll-row real-row">
+        <div id="real-stage" class="scroll-stage">
+          <img id="real-img" src="./assets/scroll_real_full.jpg" alt="實境攝影全卷 第01至17段" />
+          <div id="real-dot" class="sync-dot"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -554,6 +816,7 @@
           <option value="修改建議">✏️ 修改建議</option>
           <option value="畫風色彩">🎨 畫風／色彩</option>
           <option value="地形建築">⛰️ 地形／建築</option>
+          <option value="3D虛擬對照">🌐 3D 虛擬對照</option>
           <option value="賞析評論">👍 整體賞析</option>
         </select>
       </div>
@@ -569,13 +832,18 @@
     </form>
     <div id="comment-list" class="comment-list"></div>
     <div class="drawer-footer">
-      <button id="btn-export-md" class="btn" style="flex:1;">📋 複製全部建議 (Markdown)</button>
+      <button id="btn-export-md" class="btn" style="flex:1;" title="複製全部留言為 Markdown 格式">📋 複製 (Markdown)</button>
+      <button id="btn-export-json" class="btn" title="下載 JSON 備份檔案，永久保存您的評論建議">💾 匯出備份</button>
+      <label class="btn" style="cursor: pointer;" title="從 JSON 檔案匯入並合併留言">
+        📥 匯入
+        <input type="file" id="input-import-json" accept=".json" style="display: none;" />
+      </label>
     </div>
   </aside>
 
   <div id="nav-bar" class="nav-bar">
     <div id="nav-track" class="nav-track" title="點擊或拖曳瀏覽全卷">
-      <img src="./assets/scroll_real_full.jpg" alt="全圖導覽縮圖" />
+      <img src="./assets/scroll_orig_full.jpg" alt="全圖導覽縮圖 (原稿全卷)" />
       <div id="nav-thumb" class="nav-thumb"></div>
     </div>
     <span id="nav-pct" class="nav-pct">0%</span>
@@ -591,20 +859,25 @@
         <div>
           <h3>操作說明</h3>
           <div class="guide-grid">
-            <div class="guide-card"><strong>🔍 滑鼠滾輪（直接縮放）</strong>以游標為中心同步放大／縮小上下兩幅長卷（100%～450%），雙擊畫面可快速放大／復原。</div>
-            <div class="guide-card"><strong>↔️ Ctrl + 滾輪 / 左鍵拖曳</strong>按住 Ctrl+滾輪可左右橫移；左鍵按住拖曳支援 2D 上下左右同步平移。</div>
-            <div class="guide-card"><strong>🎯 鏡像對照準心 & 導覽條</strong>滑鼠懸停於任一長卷時，另一幅同座標處將出現金色準心；點擊或拖曳下方全圖進度條可快速跳轉。</div>
-            <div class="guide-card"><strong>💬 評論與修改建議</strong>開啟「評論建議」可鎖定目前座標與縮放倍率，支援一鍵跳轉定位、複製 Markdown 或提交 GitHub Issues。</div>
+            <div class="guide-card"><strong>🚩 選擇場景段落比較</strong>點選頂部「選擇場景段落比較」標籤列，3D 虛擬、原稿與實境長卷將同步飛躍對齊該經典景點，並顯示場景解析。</div>
+            <div class="guide-card"><strong>📏 3D 與原圖 1:1 長度精確對齊</strong>預設已啟用 1:1 鏡頭距離校準，3D 山脈寬度、高度與捲動速度與下方 2D 原稿 100% 契合；亦可切換為「🦅 全卷遠眺總覽」。</div>
+            <div class="guide-card"><strong>🎨 多場景切換比較</strong>可在「3D水墨＋原稿＋實境」、「3D體素＋原稿＋實境」、「3D水墨＋實境」、「3D水墨＋原稿」等自訂場景模式間任意切換。</div>
+            <div class="guide-card"><strong>🔍 2D 滑鼠滾輪縮放</strong>滑鼠懸停於 2D 長卷時滾輪直接放大／縮小（100%～450%），3D 視角景深同步縮放；按住 Ctrl+滾輪可橫移。</div>
+            <div class="guide-card"><strong>🎯 鏡像準心 & 導覽進度條</strong>滑鼠懸停於任一長卷時，另一幅同座標處將出現金色準心；下方全圖導覽條支援點擊／拖曳跳轉。</div>
+            <div class="guide-card"><strong>💬 評論備份與匯入</strong>支援一鍵匯出 JSON 備份或匯入合併留言，資料永久存於本機 localStorage，升級部署絕對不覆蓋。</div>
           </div>
         </div>
         <div>
           <h3>修改與製作歷程 (Changelog)</h3>
           <ul class="changelog-list">
-            <li><span class="ver-tag">v1.4 · 2026-11-26</span>新增下方「全圖縮圖導覽進度條」（支援點擊／拖曳跳轉與可視範圍框選），調整滑鼠滾輪為直接縮放、Ctrl+滾輪為橫移，並加入本修改歷程與說明視窗。</li>
-            <li><span class="ver-tag">v1.3 · 2026-11-26</span>依原畫比例重製第 17 段（卷首孤峰與低緩松林丘陵）並重新拼接全卷；新增「觀賞者評論與修改建議」側邊抽屜（含位置標註與 GitHub Issues 串接）。</li>
-            <li><span class="ver-tag">v1.2 · 2026-11-26</span>加入「雙軸同步縮放（100%～450%）」、2D 同步平移與跨卷「游標鏡像對照準心」。</li>
-            <li><span class="ver-tag">v1.1 · 2026-11-26</span>補齊第 08、09、11–17 段實景圖，完成全 17 段（24,960 × 1,080）原稿與實境長卷無縫羽化拼接，升級為上下同步對照介面。</li>
-            <li><span class="ver-tag">v1.0 · 2026-11-25</span>完成第 01–07 段長幅拼接與正中主峰示範圖，建立 <code>qianli-jiangshan-real</code> 專案並收錄至「風的異想實驗室」。</li>
+            <li><span class="ver-tag">v1.7 · 2026-11-26</span>拓展 3D 場景至全卷 100% 範圍：世界座標由原先 ±280 全面拓展至 X ∈ [-360, +360]（橫跨 720 單位），網格底板與水面延展至 960～1200 單位，完整涵蓋全卷 17 段山體（從卷首孤峰水村、四印裱邊至卷尾峭拔雙峰與方琮款印），無任何邊緣截斷或空白；下方全圖導覽改為《千里江山圖》原稿全卷（scroll_orig_full.jpg）；重構 2D/3D 同步邊界，消除跳動。</li>
+            <li><span class="ver-tag">v1.6 · 2026-11-26</span>修正「3D 場景與原圖長度不一致」：依據原卷 23.1:1 展幅公式精密校準 3D 攝影機視角與焦距，達到山脈寬度、景深與水平捲動速度 1:1 完全契合；新增頂部「場景段落快速選擇列」與多種「場景比較組合模式 (含 3D 青綠水墨 / 3D 方塊體素 / 原稿 / 實境)」，並新增留言 JSON 匯出備份與匯入功能。</li>
+            <li><span class="ver-tag">v1.5 · 2026-11-26</span>新增「虛擬 3D 青綠場景對照」：整合 WebGL / Three.js 3D 虛擬青綠長卷，具備雙向座標聯動巡航、十景跳轉與純 Flex 防遮蔽排版。</li>
+            <li><span class="ver-tag">v1.4 · 2026-11-26</span>新增下方「全圖縮圖導覽進度條」，調整滾輪縮放與 Ctrl+滾輪橫移。</li>
+            <li><span class="ver-tag">v1.3 · 2026-11-26</span>依原畫比例重製第 17 段（卷首孤峰水村）並重拼全卷；新增觀賞者評論建議抽屜。</li>
+            <li><span class="ver-tag">v1.2 · 2026-11-26</span>加入雙軸同步縮放與跨卷游標鏡像對照準心。</li>
+            <li><span class="ver-tag">v1.1 · 2026-11-26</span>完成全 17 段實景攝影羽化拼接（24,960 × 1,080），升級上下對照介面。</li>
+            <li><span class="ver-tag">v1.0 · 2026-11-25</span>完成首段拼接與主峰示範，建立 <code>qianli-jiangshan-real</code> 專案。</li>
           </ul>
         </div>
       </div>
@@ -612,12 +885,31 @@
   </div>
 
   <footer>
-    <span>滑鼠滾輪縮放 · Ctrl+滾輪橫移 · 左鍵拖曳 2D 平移 · 懸停顯示鏡像準心</span>
+    <span>3D 視圖：左鍵平移 · 右鍵旋轉 · 滾輪縮放 ｜ 2D 長卷：滾輪縮放 · Ctrl+滾輪橫移 · 拖曳平移</span>
     <span><a href="https://spencer384.github.io/" target="_blank">← 返回 風的異想實驗室</a></span>
   </footer>
 
-  <script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // 3D-Ink Scene Modules
+    import { createTerrainAndWater as createInkTerrainAndWater } from './src/terrain.js?v=20261126b';
+    import { createArchitectureAndFlora as createInkArchitectureAndFlora } from './src/architecture.js?v=20261126b';
+    import { createAnimations as createInkAnimations } from './src/animations.js?v=20261126b';
+
+    // 3D-Minecraft Scene Modules
+    import { createBlockTextures } from './src/mc_textures.js?v=20261126b';
+    import { createTerrainAndWater as createMcTerrainAndWater } from './src/mc_terrain.js?v=20261126b';
+    import { createArchitectureAndFlora as createMcArchitectureAndFlora } from './src/mc_architecture.js?v=20261126b';
+    import { createAnimations as createMcAnimations } from './src/mc_animations.js?v=20261126b';
+
+    // --- DOM Elements ---
     const viewer = document.getElementById('pano-viewer');
+    const threeWrap = document.getElementById('three-wrap');
+    const origWrap = document.getElementById('orig-wrap');
+    const realWrap = document.getElementById('real-wrap');
+    const threeTag = document.getElementById('three-tag');
     const origRow = document.getElementById('orig-row');
     const realRow = document.getElementById('real-row');
     const navBar = document.getElementById('nav-bar');
@@ -629,12 +921,221 @@
     const origDot = document.getElementById('orig-dot');
     const realDot = document.getElementById('real-dot');
     const gallery = document.getElementById('gallery-view');
-    const btnCompare = document.getElementById('btn-compare');
-    const btnSingle = document.getElementById('btn-single');
-    const btnGallery = document.getElementById('btn-gallery');
+
+    const compareModeSelect = document.getElementById('compare-mode-select');
     const btnAuto = document.getElementById('btn-auto');
     const zoomLabel = document.getElementById('zoom-label');
 
+    const threeContainer = document.getElementById('three-canvas-container');
+    const btnThreeStyle = document.getElementById('btn-three-style');
+    const btnThreeScale = document.getElementById('btn-three-scale');
+    const btnThreeViewToggle = document.getElementById('btn-three-view-toggle');
+    const btnThreeReset = document.getElementById('btn-three-reset');
+    const threeCoordsBadge = document.getElementById('three-coords-badge');
+    const sceneCardTitle = document.getElementById('scene-card-title');
+    const sceneCardDesc = document.getElementById('scene-card-desc');
+
+    const scenePills = document.querySelectorAll('.scene-pill');
+    const btnScenePrev = document.getElementById('btn-scene-prev');
+    const btnSceneNext = document.getElementById('btn-scene-next');
+
+    // --- 10 Scenic Spots ordered Right-to-Left (卷首 100% -> 卷尾 0%) ---
+    const SCENIC_SPOTS = [
+      {
+        id: 'siyin',
+        name: '卷首四印 · 孤峰與水村',
+        sliceTag: '全卷第 17 段 · 卷首入畫',
+        x: 340,
+        desc: '畫卷最右端裱邊鈐有四方朱紅鑑賞印璽，入畫處遠景聳立孤峰，近景低緩松林、沙洲水村與竹叢相映，拉開千里江山序幕。',
+      },
+      {
+        id: 'youwan',
+        name: '右岸煙波灣 · 銀波扁舟',
+        sliceTag: '全卷第 15-16 段 · 水灣展開',
+        x: 285,
+        desc: '開卷後隨即展出一片開闊的銀青色水灣，白鷺低飛、漁舟輕泛，石青懸崖與低緩松林半島相望。',
+      },
+      {
+        id: 'youer',
+        name: '右二主山群 · 青綠層巒',
+        sliceTag: '全卷第 13-14 段 · 連綿群峰',
+        x: 220,
+        desc: '石青石綠渲染的連綿群峰拔地而起，山腳緩坡掩映村落茅舍，水榭連橋橫跨水口。',
+      },
+      {
+        id: 'youyi',
+        name: '右一大主山 · 峻拔泊船',
+        sliceTag: '全卷第 10-12 段 · 雄渾右峰',
+        x: 145,
+        desc: '右側最雄渾的高峰拔地直上，山腰雲氣流動，左下方避風港灣內停泊著高桅竹骨大江船與雙層拱橋。',
+      },
+      {
+        id: 'zhongyouwan',
+        name: '中右開闊水灣 · 留白帆影',
+        sliceTag: '全卷第 08-09 段 · 氣韻貫通',
+        x: 75,
+        desc: '正中主峰與右側山群之間的澄淨湖面，帆影點點，凸顯中國長卷「疏可走馬」的虛實節奏。',
+      },
+      {
+        id: 'zhufeng',
+        name: '核心 · 正中特大主峰',
+        sliceTag: '全卷第 06-07 段 · 全景靈魂',
+        x: 0,
+        desc: '全卷正中軸最巍峨的雙頂石青主峰，氣勢磅礡；右壁飛瀑直瀉入潭，正前方雙層長虹亭橋上旅人往來絡繹不絕。',
+      },
+      {
+        id: 'zhongzuo',
+        name: '中左層巒山寺 · 古剎浮屠',
+        sliceTag: '全卷第 05 段 · 幽境梵剎',
+        x: -75,
+        desc: '主峰左側山勢呈階梯狀層層遞降，山腰平臺建有朱柱古剎與五層八角佛塔，僧侶緩步庭院。',
+      },
+      {
+        id: 'zuozhong',
+        name: '左中銳峰群 · 臨江石壁',
+        sliceTag: '全卷第 04 段 · 奇峭險峰',
+        x: -142,
+        desc: '一組險峻挺拔的青綠銳峰探入江心，奇峰壁立，與左側浩瀚平遠大湖形成鮮明對比。',
+      },
+      {
+        id: 'dahu',
+        name: '平遠 · 浩瀚平遠大湖',
+        sliceTag: '全卷第 02-03 段 · 平遠水鄉',
+        x: -235,
+        desc: '全卷最寬廣的平遠水面，天際線隱現淡青遠山，前景沙嘴蘆葦搖曳，漁舟與白鷺點綴其間。',
+      },
+      {
+        id: 'juanwei',
+        name: '卷尾 · 峭拔雙峰與雙印',
+        sliceTag: '全卷第 01 段 · 收卷餘韻',
+        x: -330,
+        desc: '畫卷最左端陡然拔起兩座尖峭青峰，俯瞰山腳漁村村橋，最左裱邊鈐有方琮款印，畫下餘韻無窮的句點。',
+      },
+    ];
+
+    // Coordinate mapping bounds:
+    // 2D scroll left (0%) corresponds to 卷尾 (X = -360)
+    // 2D scroll right (100%) corresponds to 卷首 (X = +360)
+    const X_MIN = -360;
+    const X_MAX = 360;
+    const X_SPAN = X_MAX - X_MIN; // 720 units
+
+    function ratioTo3DX(ratio) {
+      return X_MIN + X_SPAN * ratio;
+    }
+
+    function threeXToRatio(x) {
+      return Math.min(1, Math.max(0, (x - X_MIN) / X_SPAN));
+    }
+
+    // --- Three.js Scene Setup ---
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#dad5c2');
+    scene.fog = new THREE.FogExp2('#dad5c2', 0.0034);
+
+    const camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.5, 800);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    threeContainer.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+    controls.maxPolarAngle = Math.PI * 0.47;
+    controls.minDistance = 6;
+    controls.maxDistance = 260;
+    controls.screenSpacePanning = false;
+    controls.mouseButtons = {
+      LEFT: THREE.MOUSE.PAN,
+      MIDDLE: THREE.MOUSE.DOLLY,
+      RIGHT: THREE.MOUSE.ROTATE,
+    };
+    controls.touches = {
+      ONE: THREE.TOUCH.PAN,
+      TWO: THREE.TOUCH.DOLLY_ROTATE,
+    };
+
+    // Shared Sunlight & Sky
+    scene.add(new THREE.HemisphereLight('#f6f1de', '#3b574d', 1.25));
+    const sunLight = new THREE.DirectionalLight('#fff4da', 1.85);
+    sunLight.position.set(90, 115, 65);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.set(2048, 2048);
+    sunLight.shadow.camera.near = 10;
+    sunLight.shadow.camera.far = 400;
+    sunLight.shadow.camera.left = -400;
+    sunLight.shadow.camera.right = 400;
+    sunLight.shadow.camera.top = 95;
+    sunLight.shadow.camera.bottom = -95;
+    sunLight.shadow.bias = -0.0005;
+    scene.add(sunLight);
+
+    // --- Build Multi-Style 3D Worlds ---
+    const inkGroup = new THREE.Group();
+    const mcGroup = new THREE.Group();
+    scene.add(inkGroup);
+    scene.add(mcGroup);
+
+    // 1. Classical 3D-Ink World
+    const { waterUniforms } = createInkTerrainAndWater(inkGroup);
+    createInkArchitectureAndFlora(inkGroup);
+    const updateInkAnimations = createInkAnimations(inkGroup);
+
+    // 2. Minecraft Voxel World
+    const blockTextures = createBlockTextures();
+    const mcTerrainObj = createMcTerrainAndWater(mcGroup, blockTextures);
+    createMcArchitectureAndFlora(mcGroup, blockTextures);
+    const updateMcAnimations = createMcAnimations(mcGroup);
+
+    // Default style: 3D-Ink
+    let current3DStyle = 'ink';
+    mcGroup.visible = false;
+
+    // --- Scale Alignment (1:1 Length Calibration) ---
+    let isScaleLocked1to1 = true;
+    let isBirdEye = true;
+    let currentSpotIndex = 5; // Default: 正中特大主峰 (index 5)
+
+    function getTargetCameraDistance() {
+      if (!isScaleLocked1to1) return 118; // 全卷遠眺總覽
+      const activeRow = getActive2DRow();
+      const H_row = Math.max(1, activeRow.clientHeight);
+      const H_3D = Math.max(1, threeContainer.clientHeight);
+      const scaleRatio = H_3D / H_row;
+      // 720 units (3D span) / (2 * tan(22.5) * 23.111 * zoom)
+      // At zoom 1.0, distance perfectly matches the 2D window span across full 720 coordinate units
+      const baseDistance = (720 * scaleRatio) / (2 * 0.41421356 * 23.111 * Math.max(0.5, zoom));
+      return Math.min(145, Math.max(20, baseDistance));
+    }
+
+    function resetCameraTo1to1(cx = controls.target.x) {
+      const dist = getTargetCameraDistance();
+      const targetY = 7.5;
+      const camY = isBirdEye ? targetY + dist * 0.28 : targetY + 1.0;
+      controls.target.set(cx, targetY, 0);
+      camera.position.set(cx, camY, dist);
+      controls.update();
+      threeCoordsBadge.textContent = `3D X: ${Math.round(cx)}`;
+    }
+
+    function resizeThree() {
+      const w = threeContainer.clientWidth;
+      const h = threeContainer.clientHeight;
+      if (w <= 0 || h <= 0) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      if (isScaleLocked1to1) {
+        resetCameraTo1to1(controls.target.x);
+      }
+    }
+
+    // --- Gallery Cards Generation ---
     const slices = [
       { title: '精選示範 · 正中主峰與山灣古村', orig: './assets/slices_orig/sample_section.png', real: './assets/sample_section_real.jpg', tag: '16:9 精選示範' },
       { title: '第 01 段 · 卷尾雙峰與村橋', orig: './assets/slices_orig/orig_01.png', real: './assets/slices_real/real_01.jpg', tag: '全卷 01/17' },
@@ -669,14 +1170,24 @@
       gallery.appendChild(card);
     });
 
-    // --- Synchronized Zoom & 2D Pan ---
+    // --- State & Synchronizers ---
+    let currentMode = 'tri-ink';
     let zoom = 1.0;
     const MIN_ZOOM = 1.0;
     const MAX_ZOOM = 4.5;
-    let isSyncing = false;
+
+    let isSyncingFrom2D = false;
+    let isSyncingFrom3D = false;
+    let isSyncingBetween2D = false;
+    let cameraTween = null;
+
+    function getActive2DRow() {
+      if (currentMode === 'single-real' || currentMode === 'dual-3d-real' || currentMode === 'dual-mc-real') return realRow;
+      return origRow;
+    }
 
     function updateNavBar() {
-      const row = viewer.classList.contains('single-mode') ? realRow : origRow;
+      const row = getActive2DRow();
       const total = Math.max(1, row.scrollWidth);
       const vis = Math.min(total, row.clientWidth);
       const leftRatio = Math.min(1, Math.max(0, row.scrollLeft / total));
@@ -689,30 +1200,70 @@
       navPct.textContent = `${Math.min(100, Math.max(0, pct))}%`;
     }
 
-    function syncScroll(source, target) {
-      if (isSyncing) return;
-      isSyncing = true;
+    function sync2DScroll(source, target) {
+      if (isSyncingBetween2D) return;
+      isSyncingBetween2D = true;
       target.scrollLeft = source.scrollLeft;
       target.scrollTop = source.scrollTop;
       updateNavBar();
-      requestAnimationFrame(() => { isSyncing = false; });
+      sync2DTo3D();
+      requestAnimationFrame(() => { isSyncingBetween2D = false; });
     }
 
-    origRow.addEventListener('scroll', () => syncScroll(origRow, realRow));
-    realRow.addEventListener('scroll', () => syncScroll(realRow, origRow));
+    origRow.addEventListener('scroll', () => sync2DScroll(origRow, realRow));
+    realRow.addEventListener('scroll', () => sync2DScroll(realRow, origRow));
 
+    function sync2DTo3D() {
+      if (isSyncingFrom3D || cameraTween) return;
+      const is3DActive = currentMode.startsWith('tri') || currentMode.startsWith('dual-3d') || currentMode.startsWith('dual-mc');
+      if (!is3DActive) return;
+
+      const activeRow = getActive2DRow();
+      const maxScroll = Math.max(1, activeRow.scrollWidth - activeRow.clientWidth);
+      const centerRatio = Math.min(1, Math.max(0, activeRow.scrollLeft / maxScroll));
+      const target3DX = ratioTo3DX(centerRatio);
+
+      isSyncingFrom2D = true;
+      const dx = target3DX - controls.target.x;
+      controls.target.x = target3DX;
+      camera.position.x += dx;
+      threeCoordsBadge.textContent = `3D X: ${Math.round(target3DX)}`;
+      requestAnimationFrame(() => { isSyncingFrom2D = false; });
+    }
+
+    controls.addEventListener('change', () => {
+      const cx = controls.target.x;
+      threeCoordsBadge.textContent = `3D X: ${Math.round(cx)}`;
+      const is3DActive = currentMode.startsWith('tri') || currentMode.startsWith('dual-3d') || currentMode.startsWith('dual-mc');
+      if (isSyncingFrom2D || cameraTween || !is3DActive) return;
+
+      const ratio = threeXToRatio(cx);
+      isSyncingFrom3D = true;
+      const activeRow = getActive2DRow();
+      const maxScroll = Math.max(1, activeRow.scrollWidth - activeRow.clientWidth);
+      const targetLeft = ratio * maxScroll;
+      origRow.scrollLeft = targetLeft;
+      realRow.scrollLeft = targetLeft;
+      updateNavBar();
+      requestAnimationFrame(() => { isSyncingFrom3D = false; });
+    });
+
+    // Minimap scrub
     let navDragging = false;
     function scrubNav(clientX) {
       autoPan = false;
       btnAuto.classList.remove('active');
       const rect = navTrack.getBoundingClientRect();
       const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-      const row = viewer.classList.contains('single-mode') ? realRow : origRow;
-      const targetLeft = ratio * row.scrollWidth - row.clientWidth / 2;
+      const row = getActive2DRow();
+      const maxScroll = Math.max(1, row.scrollWidth - row.clientWidth);
+      const targetLeft = ratio * maxScroll;
       origRow.scrollLeft = targetLeft;
       realRow.scrollLeft = targetLeft;
       updateNavBar();
+      sync2DTo3D();
     }
+
     navTrack.addEventListener('pointerdown', (e) => {
       navDragging = true;
       navTrack.setPointerCapture(e.pointerId);
@@ -722,10 +1273,179 @@
       if (navDragging) scrubNav(e.clientX);
     });
     navTrack.addEventListener('pointerup', () => { navDragging = false; });
-    window.addEventListener('resize', updateNavBar);
-    document.getElementById('orig-img').addEventListener('load', updateNavBar);
-    document.getElementById('real-img').addEventListener('load', updateNavBar);
 
+    // --- Smooth Camera Flight Animation ---
+    function animateCameraTo(targetPos, targetLookAt, duration = 1000) {
+      const startPos = camera.position.clone();
+      const startTarget = controls.target.clone();
+      const startTime = performance.now();
+
+      if (cameraTween) cancelAnimationFrame(cameraTween);
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startTarget, targetLookAt, ease);
+        controls.update();
+        threeCoordsBadge.textContent = `3D X: ${Math.round(controls.target.x)}`;
+
+        if (progress < 1) {
+          cameraTween = requestAnimationFrame(step);
+        } else {
+          cameraTween = null;
+        }
+      }
+      cameraTween = requestAnimationFrame(step);
+    }
+
+    function smoothScroll2DToRatio(ratio, duration = 1000) {
+      isSyncingFrom3D = true;
+      const activeRow = getActive2DRow();
+      const maxScroll = Math.max(1, activeRow.scrollWidth - activeRow.clientWidth);
+      const targetLeft = Math.min(maxScroll, Math.max(0, ratio * maxScroll));
+      const startLeft = activeRow.scrollLeft;
+      const startTime = performance.now();
+
+      function scrollStep(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        const currentLeft = startLeft + (targetLeft - startLeft) * ease;
+        origRow.scrollLeft = currentLeft;
+        realRow.scrollLeft = currentLeft;
+        updateNavBar();
+
+        if (progress < 1) {
+          requestAnimationFrame(scrollStep);
+        } else {
+          isSyncingFrom3D = false;
+        }
+      }
+      requestAnimationFrame(scrollStep);
+    }
+
+    // --- Scene Selection Navigation ---
+    function selectScene(index) {
+      if (index < 0 || index >= SCENIC_SPOTS.length) return;
+      currentSpotIndex = index;
+      const spot = SCENIC_SPOTS[index];
+
+      // Update pill active states
+      scenePills.forEach((p, i) => p.classList.toggle('active', i === index));
+
+      // Update scene info card
+      sceneCardTitle.textContent = `${spot.name} (${spot.sliceTag})`;
+      sceneCardDesc.textContent = spot.desc;
+
+      const ratio = threeXToRatio(spot.x);
+      const dist = getTargetCameraDistance();
+      const targetY = 7.5;
+      const camY = isBirdEye ? targetY + dist * 0.28 : targetY + 1.0;
+      const targetPos = new THREE.Vector3(spot.x, camY, dist);
+      const targetLookAt = new THREE.Vector3(spot.x, targetY, 0);
+
+      const activeRow = getActive2DRow();
+      const maxScroll = Math.max(1, activeRow.scrollWidth - activeRow.clientWidth);
+      const targetLeft = Math.min(maxScroll, Math.max(0, ratio * maxScroll));
+      const startLeft = activeRow.scrollLeft;
+
+      const startPos = camera.position.clone();
+      const startTarget = controls.target.clone();
+      const startTime = performance.now();
+      const duration = 1000;
+
+      isSyncingFrom3D = true;
+      if (cameraTween) cancelAnimationFrame(cameraTween);
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        // 3D step
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startTarget, targetLookAt, ease);
+        controls.update();
+        threeCoordsBadge.textContent = `3D X: ${Math.round(controls.target.x)}`;
+
+        // 2D scroll step
+        const currentLeft = startLeft + (targetLeft - startLeft) * ease;
+        origRow.scrollLeft = currentLeft;
+        realRow.scrollLeft = currentLeft;
+        updateNavBar();
+
+        if (progress < 1) {
+          cameraTween = requestAnimationFrame(step);
+        } else {
+          cameraTween = null;
+          isSyncingFrom3D = false;
+        }
+      }
+      cameraTween = requestAnimationFrame(step);
+    }
+
+    scenePills.forEach((p, i) => {
+      p.addEventListener('click', () => selectScene(i));
+    });
+    btnScenePrev.addEventListener('click', () => {
+      selectScene(Math.max(0, currentSpotIndex - 1));
+    });
+    btnSceneNext.addEventListener('click', () => {
+      selectScene(Math.min(SCENIC_SPOTS.length - 1, currentSpotIndex + 1));
+    });
+
+    // 3D Style Switcher (Ink vs Minecraft)
+    function set3DStyle(style) {
+      current3DStyle = style;
+      if (style === 'ink') {
+        inkGroup.visible = true;
+        mcGroup.visible = false;
+        scene.background.set('#dad5c2');
+        scene.fog.color.set('#dad5c2');
+        btnThreeStyle.textContent = '風格: 🎨 青綠水墨';
+        threeTag.textContent = '🌐 3D 虛擬青綠水墨 · 數位場景（長度已 1:1 對齊下方長卷）';
+      } else {
+        inkGroup.visible = false;
+        mcGroup.visible = true;
+        scene.background.set('#c8d8dc');
+        scene.fog.color.set('#c8d8dc');
+        btnThreeStyle.textContent = '風格: 🧱 方塊體素';
+        threeTag.textContent = '🧱 3D 虛擬方塊體素 (Minecraft) · 數位場景（長度已 1:1 對齊）';
+      }
+    }
+
+    btnThreeStyle.addEventListener('click', () => {
+      set3DStyle(current3DStyle === 'ink' ? 'mc' : 'ink');
+    });
+
+    // 1:1 Scale Alignment Lock Switcher
+    btnThreeScale.addEventListener('click', () => {
+      isScaleLocked1to1 = !isScaleLocked1to1;
+      btnThreeScale.classList.toggle('active', isScaleLocked1to1);
+      btnThreeScale.textContent = isScaleLocked1to1 ? '比例: 📏 1:1 對齊' : '比例: 🦅 全卷總覽';
+      resetCameraTo1to1(controls.target.x);
+    });
+
+    // View Angle Toggle (Bird's Eye vs Scroll Elevation)
+    btnThreeViewToggle.addEventListener('click', () => {
+      isBirdEye = !isBirdEye;
+      btnThreeViewToggle.textContent = isBirdEye ? '視角: 3D鳥瞰' : '視角: 長卷正視';
+      const cx = controls.target.x;
+      const dist = getTargetCameraDistance();
+      const targetY = 7.5;
+      const camY = isBirdEye ? targetY + dist * 0.28 : targetY + 1.0;
+      animateCameraTo(new THREE.Vector3(cx, camY, dist), new THREE.Vector3(cx, targetY, 0), 750);
+    });
+
+    btnThreeReset.addEventListener('click', () => {
+      selectScene(currentSpotIndex);
+    });
+
+    // --- 2D Zoom & Interaction Handlers ---
     function setZoom(nextZoom, anchorRow = realRow, clientX = null, clientY = null) {
       const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
       if (Math.abs(clamped - zoom) < 0.001) return;
@@ -749,6 +1469,11 @@
       realRow.scrollLeft = nextLeft;
       realRow.scrollTop = nextTop;
       updateNavBar();
+      sync2DTo3D();
+
+      if (isScaleLocked1to1) {
+        resetCameraTo1to1(controls.target.x);
+      }
     }
 
     document.getElementById('btn-zoom-in').addEventListener('click', () => setZoom(zoom * 1.35));
@@ -794,7 +1519,6 @@
         }
       }, { passive: false });
 
-      // Mirror cursor crosshair dot on the opposite scroll
       stage.addEventListener('mousemove', (e) => {
         const r = stage.getBoundingClientRect();
         const u = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
@@ -811,47 +1535,116 @@
     attachRowInteractions(origRow, origStage, realDot);
     attachRowInteractions(realRow, realStage, origDot);
 
-    function setTab(mode) {
-      btnCompare.classList.toggle('active', mode === 'compare');
-      btnSingle.classList.toggle('active', mode === 'single');
-      btnGallery.classList.toggle('active', mode === 'gallery');
+    // --- Multi-Scene Comparison Modes Switching ---
+    function setComparisonMode(mode) {
+      currentMode = mode;
+      compareModeSelect.value = mode;
+
+      viewer.classList.remove(
+        'tri-mode',
+        'dual-3d-real-mode',
+        'dual-3d-orig-mode',
+        'dual-orig-real-mode',
+        'single-mode'
+      );
+
       if (mode === 'gallery') {
         viewer.style.display = 'none';
         navBar.style.display = 'none';
         gallery.classList.add('active');
         autoPan = false;
         btnAuto.classList.remove('active');
-      } else {
-        viewer.style.display = 'flex';
-        navBar.style.display = 'flex';
-        gallery.classList.remove('active');
-        viewer.classList.toggle('single-mode', mode === 'single');
-        updateNavBar();
+        return;
       }
+
+      viewer.style.display = 'flex';
+      navBar.style.display = 'flex';
+      gallery.classList.remove('active');
+
+      if (mode === 'tri-ink') {
+        set3DStyle('ink');
+        viewer.classList.add('tri-mode');
+      } else if (mode === 'tri-mc') {
+        set3DStyle('mc');
+        viewer.classList.add('tri-mode');
+      } else if (mode === 'dual-3d-real') {
+        set3DStyle('ink');
+        viewer.classList.add('dual-3d-real-mode');
+      } else if (mode === 'dual-mc-real') {
+        set3DStyle('mc');
+        viewer.classList.add('dual-3d-real-mode');
+      } else if (mode === 'dual-3d-orig') {
+        set3DStyle('ink');
+        viewer.classList.add('dual-3d-orig-mode');
+      } else if (mode === 'dual-orig-real') {
+        viewer.classList.add('dual-orig-real-mode');
+      } else if (mode === 'single-real') {
+        viewer.classList.add('single-mode');
+      }
+
+      requestAnimationFrame(() => {
+        resizeThree();
+        updateNavBar();
+        sync2DTo3D();
+      });
     }
 
-    btnCompare.addEventListener('click', () => setTab('compare'));
-    btnSingle.addEventListener('click', () => setTab('single'));
-    btnGallery.addEventListener('click', () => setTab('gallery'));
+    compareModeSelect.addEventListener('change', (e) => {
+      setComparisonMode(e.target.value);
+    });
 
+    // --- Auto Cruise Roam ---
     let autoPan = false;
     let dir = 1;
     btnAuto.addEventListener('click', () => {
       autoPan = !autoPan;
       btnAuto.classList.toggle('active', autoPan);
     });
-    function tick() {
+
+    const clock = new THREE.Clock();
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
+      const delta = clock.getDelta();
+      const time = clock.getElapsedTime();
+
+      // Update active 3D animations
+      if (current3DStyle === 'ink') {
+        if (waterUniforms) waterUniforms.uTime.value = time;
+        if (updateInkAnimations) updateInkAnimations(delta, time);
+      } else {
+        if (updateMcAnimations) updateMcAnimations(delta, time);
+      }
+      controls.update();
+
+      const is3DActive = currentMode.startsWith('tri') || currentMode.startsWith('dual-3d') || currentMode.startsWith('dual-mc');
+      if (is3DActive) {
+        renderer.render(scene, camera);
+      }
+
       if (autoPan && viewer.style.display !== 'none') {
-        const activeRow = viewer.classList.contains('single-mode') ? realRow : origRow;
+        const activeRow = getActive2DRow();
         activeRow.scrollLeft += 1.2 * dir;
+        sync2DTo3D();
         if (activeRow.scrollLeft + activeRow.clientWidth >= activeRow.scrollWidth - 2) dir = -1;
         else if (activeRow.scrollLeft <= 0) dir = 1;
       }
-      requestAnimationFrame(tick);
     }
-    tick();
+    renderLoop();
 
-    // --- Viewer Comments & Modification Suggestions ---
+    window.addEventListener('resize', () => {
+      resizeThree();
+      updateNavBar();
+    });
+    document.getElementById('orig-img').addEventListener('load', () => {
+      updateNavBar();
+      sync2DTo3D();
+    });
+    document.getElementById('real-img').addEventListener('load', () => {
+      updateNavBar();
+      sync2DTo3D();
+    });
+
+    // --- Viewer Comments ---
     const STORAGE_KEY = 'qianli_real_comments_v1';
     const drawer = document.getElementById('comment-drawer');
     const btnComments = document.getElementById('btn-comments');
@@ -862,15 +1655,18 @@
     function loadComments() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch (_) {}
       return [
         {
           id: 'seed-1',
           author: '策展人',
-          cat: '整體賞析',
-          text: '歡迎在此留下評論或修改建議！勾選「附帶目前長卷位置」後，點擊評論中的「📍 定位」即可讓上下兩幅長卷自動捲動並縮放到對應細節。',
-          posX: 0.42,
+          cat: '3D虛擬對照',
+          text: '已整合 3D 虛擬數位山水、全卷原稿與擬真攝影三聯同步對照！長度比例已精密 1:1 校準，點擊「📍 定位」可一鍵同步跳轉 2D 與 3D 鏡頭視角。',
+          posX: 0.5,
           posY: 0.5,
           zoom: 1.0,
           time: '系統提示',
@@ -885,14 +1681,14 @@
     }
 
     function getCurrentViewportNorm() {
-      const row = viewer.classList.contains('single-mode') ? realRow : origRow;
+      const row = getActive2DRow();
       const cx = (row.scrollLeft + row.clientWidth / 2) / Math.max(1, row.scrollWidth);
       const cy = (row.scrollTop + row.clientHeight / 2) / Math.max(1, row.scrollHeight);
       return { posX: Number(cx.toFixed(4)), posY: Number(cy.toFixed(4)), zoom: Number(zoom.toFixed(2)) };
     }
 
     function jumpToLocation(c) {
-      setTab('compare');
+      if (currentMode === 'gallery') setComparisonMode('tri-ink');
       setZoom(c.zoom || 1.0, origRow);
       requestAnimationFrame(() => {
         const left = c.posX * origRow.scrollWidth - origRow.clientWidth / 2;
@@ -901,6 +1697,8 @@
         origRow.scrollTop = top;
         realRow.scrollLeft = left;
         realRow.scrollTop = top;
+        updateNavBar();
+        sync2DTo3D();
       });
     }
 
@@ -994,9 +1792,46 @@
       try {
         await navigator.clipboard.writeText(md);
         const btn = document.getElementById('btn-export-md');
-        btn.textContent = '✅ 已複製 Markdown 建議清單';
-        setTimeout(() => { btn.textContent = '📋 複製全部建議 (Markdown)'; }, 2000);
+        btn.textContent = '✅ 已複製 Markdown';
+        setTimeout(() => { btn.textContent = '📋 複製 (Markdown)'; }, 2000);
       } catch (_) {}
+    });
+
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(comments, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `qianli_jiangshan_comments_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('input-import-json').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (Array.isArray(imported)) {
+            let addedCount = 0;
+            imported.forEach((item) => {
+              if (item && item.id && !comments.some((c) => c.id === item.id)) {
+                comments.push(item);
+                addedCount++;
+              }
+            });
+            saveComments();
+            renderComments();
+            alert(`已成功合併 ${addedCount} 則留言！`);
+          }
+        } catch (err) {
+          alert('匯入失敗：檔案格式不正確');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
     });
 
     renderComments();
@@ -1008,6 +1843,13 @@
     historyModal.addEventListener('click', (e) => {
       if (e.target === historyModal) historyModal.classList.remove('open');
     });
+
+    // Initial 1:1 framing at default scenic spot (zhufeng)
+    setTimeout(() => {
+      resizeThree();
+      updateNavBar();
+      selectScene(5); // Start framing 正中特大主峰 with 1:1 length matching
+    }, 120);
   </script>
 </body>
 </html>
