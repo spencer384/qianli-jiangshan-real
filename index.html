@@ -715,13 +715,13 @@
     <div class="controls">
       <!-- Multi-Scene Comparison Mode Selector -->
       <select id="compare-mode-select" class="three-select" style="font-weight: 700; border-color: var(--accent); padding: 4px 10px;" title="選擇比較的場景組合模式">
-        <option value="single-real" selected>🖼️ 實境全景 (預設擬真呈現)</option>
+        <option value="dual-orig-real" selected>📜 原稿 ＋ 實境 (經典上下對照)</option>
         <option value="tri-ink">🌐 3D水墨 ＋ 原稿 ＋ 實境 (三聯全景)</option>
         <option value="tri-mc">🧱 3D體素 ＋ 原稿 ＋ 實境 (三聯體素)</option>
         <option value="dual-3d-real">⛰️ 3D水墨 ＋ 實境 (虛實對照)</option>
         <option value="dual-3d-orig">🎨 3D水墨 ＋ 原稿 (水墨原畫對照)</option>
         <option value="dual-mc-real">🧱 3D體素 ＋ 實境 (體素實境對照)</option>
-        <option value="dual-orig-real">📜 原稿 ＋ 實境 (經典上下對照)</option>
+        <option value="single-real">🖼️ 單看實境全景</option>
         <option value="gallery">📐 18 組分段對照一覽</option>
       </select>
 
@@ -758,7 +758,7 @@
     </div>
   </nav>
 
-  <main id="pano-viewer" class="viewer single-mode">
+  <main id="pano-viewer" class="viewer dual-orig-real-mode">
     <!-- 3D WebGL Row -->
     <div id="three-wrap" class="row-wrapper three-wrap">
       <span id="three-tag" class="row-tag three-tag">🌐 3D 虛擬青綠水墨 · 數位場景（長度已 1:1 對齊下方長卷）</span>
@@ -1171,7 +1171,7 @@
     });
 
     // --- State & Synchronizers ---
-    let currentMode = 'single-real';
+    let currentMode = 'dual-orig-real';
     let zoom = 1.0;
     const MIN_ZOOM = 1.0;
     const MAX_ZOOM = 4.5;
@@ -1846,7 +1846,7 @@
 
     // Initial 1:1 framing at default scenic spot (zhufeng)
     setTimeout(() => {
-      setComparisonMode('single-real');
+      setComparisonMode('dual-orig-real');
       updateNavBar();
       selectScene(5); // Start framing 正中特大主峰
     }, 120);
